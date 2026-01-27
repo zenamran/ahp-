@@ -280,7 +280,7 @@ def generate_sonatrach_pv(df_results):
     styles = getSampleStyleSheet()
 
     title = ParagraphStyle(
-        fontName="Helvetica-Bold",
+        fontName="Helvetica",
         fontSize=14,
         alignment=1,
         spaceAfter=20
@@ -383,6 +383,7 @@ st.download_button(
     file_name="PV_Evaluation.pdf",
     mime="application/pdf"
 )
+
 
 
 
