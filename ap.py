@@ -253,9 +253,9 @@ st.caption("Developed by Zennani Amran / Zerguine Moussa.")
 
 #.......PV.........
 def generate_sonatrach_pv(df_results):
-   buffer = BytesIO()
+    buffer = BytesIO()
 
-   def header_footer(canvas, doc):
+    def header_footer(canvas, doc):
         canvas.setFont("Helvetica", 9)
         canvas.drawString(2*cm, 28.5*cm, "SONATRACH")
         canvas.drawString(2*cm, 28.0*cm, "Direction Approvisionnement")
@@ -265,9 +265,10 @@ def generate_sonatrach_pv(df_results):
         canvas.drawRightString(19*cm, 28.0*cm, "Date : ____ / ____ / 2026")
 
         canvas.line(2*cm, 27.2*cm, 19*cm, 27.2*cm)
+
         canvas.drawRightString(19*cm, 1.2*cm, f"Page {doc.page}")
 
-   doc = SimpleDocTemplate(
+    doc = SimpleDocTemplate(
         buffer,
         pagesize=A4,
         rightMargin=2*cm,
@@ -279,26 +280,24 @@ def generate_sonatrach_pv(df_results):
     styles = getSampleStyleSheet()
 
     title = ParagraphStyle(
-       name="Title",
-       fontName="DejaVu-Bold",
-       fontSize=16,
-       spaceAfter=20,
-       alignment=1 # للتوسيط
+        fontName="Helvetica-Bold",
+        fontSize=14,
+        alignment=1,
+        spaceAfter=20
     )
 
-    # تم تغيير التسمية هنا من normal إلى body لتطابق الاستدعاء في الأسفل
     body = ParagraphStyle(
-      name="Normal",
-      fontName="DejaVu",
-      fontSize=11,
-      leading=14
+        fontName="Helvetica",
+        fontSize=11,
+        spaceAfter=10,
+        leading=15
     )
 
     elements = []
 
     # عنوان رسمي
     elements.append(Paragraph(
-       "PROCÈS-VERBAL DE LA COMMISSION D’ÉVALUATION DES OFFRES",
+        "PROCÈS-VERBAL DE LA COMMISSION D’ÉVALUATION DES OFFRES",
         title
     ))
 
@@ -306,13 +305,18 @@ def generate_sonatrach_pv(df_results):
 
     # نص إداري رسمي
     text = """
-    L’an deux mille vingt-six et le ____ / ____ / 2026, la commission d’évaluation des offres...
-    L’évaluation a été réalisée selon une méthodologie multicritère (AHP)...
+    L’an deux mille vingt-six et le ____ / ____ / 2026, la commission d’évaluation des offres,
+    dûment constituée conformément aux procédures internes de SONATRACH, s’est réunie au siège
+    de la Direction Approvisionnement afin de procéder à l’analyse et à l’évaluation des offres
+    reçues dans le cadre de la consultation relative à la sélection de fournisseurs.
+
+    L’évaluation a été réalisée selon une méthodologie multicritère reposant sur l’approche
+    Analytic Hierarchy Process (AHP) combinée à une méthode de Scoring pondéré, garantissant
+    l’objectivité, la transparence et la traçabilité du processus de décision.
     """
 
     for line in text.strip().split("\n"):
-        if line.strip():
-            elements.append(Paragraph(line.strip(), body)) # الآن المتغير body معرف ولن يظهر الخطأ
+        elements.append(Paragraph(line.strip(), body))
 
     elements.append(Spacer(1, 15))
 
@@ -334,7 +338,7 @@ def generate_sonatrach_pv(df_results):
 
     elements.append(Spacer(1, 10))
     elements.append(table)
-   elements.append(Spacer(1, 15))
+    elements.append(Spacer(1, 15))
 
     # النتيجة النهائية
     best = df_results.iloc[0]["Supplier"]
@@ -357,7 +361,7 @@ def generate_sonatrach_pv(df_results):
         ["Signature : ______________", "Signature : _____________", "Signature : _____________"],
     ], colWidths=[6*cm, 6*cm, 6*cm])
 
-   signature_table.setStyle(TableStyle([
+    signature_table.setStyle(TableStyle([
         ('GRID', (0,0), (-1,-1), 0.5, colors.grey),
         ('ALIGN', (0,0), (-1,-1), 'CENTER'),
         ('FONTSIZE', (0,0), (-1,-1), 9),
@@ -370,16 +374,6 @@ def generate_sonatrach_pv(df_results):
     buffer.seek(0)
     return buffer
 
-st.subheader("📄 Procès-Verbal")
-
-pdf = generate_sonatrach_pv(df_ahp)
-
-st.download_button(
-    "📥 Télécharger le PV",
-    data=pdf,
-    file_name="PV_Evaluation_SONATRACH.pdf",
-    mime="application/pdf"
-)
 
 
 
