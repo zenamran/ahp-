@@ -255,7 +255,7 @@ st.caption("Developed by Zennani Amran / Zerguine Moussa.")
 def generate_sonatrach_pv(df_results):
    buffer = BytesIO()
 
-def header_footer(canvas, doc):
+   def header_footer(canvas, doc):
         canvas.setFont("Helvetica", 9)
         canvas.drawString(2*cm, 28.5*cm, "SONATRACH")
         canvas.drawString(2*cm, 28.0*cm, "Direction Approvisionnement")
@@ -380,4 +380,5 @@ st.download_button(
     file_name="PV_Evaluation_SONATRACH.pdf",
     mime="application/pdf"
 )
+
 
