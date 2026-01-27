@@ -373,6 +373,17 @@ def generate_sonatrach_pv(df_results):
 
     buffer.seek(0)
     return buffer
+st.subheader("📄 Procès-Verbal Officiel")
+
+pdf = generate_sonatrach_pv(df_ahp)
+
+st.download_button(
+    "📥 Télécharger le PV",
+    data=pdf,
+    file_name="PV_Evaluation.pdf",
+    mime="application/pdf"
+)
+
 
 
 
