@@ -267,7 +267,7 @@ def generate_sonatrach_pv(df_results):
         canvas.line(2*cm, 27.2*cm, 19*cm, 27.2*cm)
         canvas.drawRightString(19*cm, 1.2*cm, f"Page {doc.page}")
 
-    doc = SimpleDocTemplate(
+   doc = SimpleDocTemplate(
         buffer,
         pagesize=A4,
         rightMargin=2*cm,
@@ -380,5 +380,6 @@ st.download_button(
     file_name="PV_Evaluation_SONATRACH.pdf",
     mime="application/pdf"
 )
+
 
 
