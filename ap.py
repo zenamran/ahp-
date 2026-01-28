@@ -252,97 +252,116 @@ st.caption("Developed for Strategic Sourcing and Procurement Analysis.")
 st.caption("Developed by Zennani Amran / Zerguine Moussa.")
 
 #.......PV.........
-def generate_pv(data, df_results):
-    file_path = "PV_SONATRACH.pdf"
+logo_sonatrach.png
 
-    doc = SimpleDocTemplate(file_path, pagesize=A4)
-    styles = getSampleStyleSheet()
+def generate_sonatrach_pv(data, df_weights, df_scores, df_results, df_members):
+    file_path = "PV_SONATRACH_OFFICIEL.pdf"
 
-    title_style = ParagraphStyle(
-        name="Title",
-        fontSize=16,
-        spaceAfter=20
+    doc = SimpleDocTemplate(
+        file_path,
+        pagesize=A4,
+        rightMargin=2*cm,
+        leftMargin=2*cm,
+        topMargin=2*cm,
+        bottomMargin=2*cm
     )
-
-    normal = styles["Normal"]
 
     elements = []
 
-    # العنوان
-    elements.append(Paragraph("<b>PROCÈS-VERBAL D'ÉVALUATION DES OFFRES</b>", title_style))
+    # ===== Styles =====
+    header_style = ParagraphStyle(fontSize=10, spaceAfter=4)
+    title_style = ParagraphStyle(fontSize=14, alignment=1, spaceAfter=15)
+    section_style = ParagraphStyle(fontSize=12, spaceBefore=10, spaceAfter=6)
+    normal_style = ParagraphStyle(fontSize=11, spaceAfter=6)
 
-    # معلومات عامة
-    elements.append(Paragraph(f"<b>Direction :</b> {data['direction']}", normal))
-    elements.append(Paragraph(f"<b>Département :</b> {data['departement']}", normal))
-    elements.append(Paragraph(f"<b>Service :</b> {data['service']}", normal))
-    elements.append(Paragraph(f"<b>Référence :</b> {data['ref']}", normal))
-    elements.append(Paragraph(f"<b>Appel d’offres :</b> {data['ao']}", normal))
-    elements.append(Paragraph(f"<b>Objet :</b> {data['objet']}", normal))
-    elements.append(Paragraph(f"<b>Date :</b> {data['date']}", normal))
-    elements.append(Paragraph(f"<b>Lieu :</b> {data['lieu']}", normal))
+    # ===== Logo =====
+    logo = Image("logo_sonatrach.png", width=4*cm, height=2*cm)
+    elements.append(logo)
 
-    elements.append(Paragraph("<br/><b>Résultats de l'évaluation :</b>", normal))
+    # ===== Header =====
+    elements.append(Paragraph("<b>SONATRACH</b>", header_style))
+    elements.append(Paragraph(f"Direction : {data['direction']}", header_style))
+    elements.append(Paragraph(f"Département : {data['departement']}", header_style))
+    elements.append(Paragraph(f"Service : {data['service']}", header_style))
 
-    # تحويل الجدول إلى Table
-    table_data = [df_results.columns.tolist()] + df_results.values.tolist()
+    elements.append(Spacer(1, 12))
 
-    table = Table(table_data)
-    table.setStyle(TableStyle([
-        ('GRID', (0,0), (-1,-1), 0.5, None),
-        ('BACKGROUND', (0,0), (-1,0), None),
-        ('ALIGN', (0,0), (-1,-1), 'CENTER'),
-    ]))
-
-    elements.append(table)
-
-    # الخلاصة
-    elements.append(Paragraph("<br/>Conclusion :", normal))
+    # ===== Title =====
     elements.append(Paragraph(
-        "La commission recommande l’attribution provisoire du marché au soumissionnaire ayant obtenu la meilleure note globale.",
-        normal
+        "<b>PROCÈS-VERBAL D'ÉVALUATION DES OFFRES</b>",
+        title_style
     ))
 
-    # التوقيعات
-    elements.append(Paragraph("<br/><br/>Signatures :", normal))
-    elements.append(Paragraph("Président de la commission : ____________________", normal))
-    elements.append(Paragraph("Membres : ____________________", normal))
+    # ===== Info Bloc =====
+    elements.append(Paragraph(f"<b>Référence :</b> {data['ref']}", normal_style))
+    elements.append(Paragraph(f"<b>AO N° :</b> {data['ao']}", normal_style))
+    elements.append(Paragraph(f"<b>Objet :</b> {data['objet']}", normal_style))
+    elements.append(Paragraph(f"<b>Date :</b> {data['date']}", normal_style))
+    elements.append(Paragraph(f"<b>Lieu :</b> {data['lieu']}", normal_style))
+
+    elements.append(Spacer(1, 10))
+
+    # ===== Function to add styled table =====
+    def add_table(title, df):
+        elements.append(Paragraph(f"<b>{title}</b>", section_style))
+        table_data = [df.columns.tolist()] + df.values.tolist()
+        table = Table(table_data, repeatRows=1)
+        table.setStyle(TableStyle([
+            ('GRID', (0,0), (-1,-1), 0.7, None),
+            ('BACKGROUND', (0,0), (-1,0), None),
+            ('ALIGN', (1,1), (-1,-1), 'CENTER'),
+            ('FONT', (0,0), (-1,-1), 'Helvetica'),
+            ('FONTSIZE', (0,0), (-1,-1), 9),
+            ('BOTTOMPADDING', (0,0), (-1,-1), 6),
+            ('TOPPADDING', (0,0), (-1,-1), 6),
+        ]))
+        elements.append(table)
+        elements.append(Spacer(1, 8))
+
+    # ===== Tables =====
+    add_table("1. Résultats des poids des critères (AHP)", df_weights)
+    add_table("2. Tableau d’évaluation des fournisseurs", df_scores)
+    add_table("3. Résultats finaux et classement", df_results)
+    add_table("4. Membres de la commission présents", df_members)
+
+    # ===== Conclusion =====
+    elements.append(Paragraph("<b>Conclusion :</b>", section_style))
+    elements.append(Paragraph(
+        "Après analyse détaillée des offres selon la méthodologie adoptée, "
+        "la commission recommande l’attribution provisoire du marché au soumissionnaire "
+        "ayant obtenu la meilleure note globale.",
+        normal_style
+    ))
+
+    elements.append(Spacer(1, 15))
+
+    # ===== Signatures =====
+    elements.append(Paragraph("<b>Signatures :</b>", section_style))
+    elements.append(Paragraph("Président de la commission : ____________________________", normal_style))
+    elements.append(Paragraph("Membre 1 : ____________________________", normal_style))
+    elements.append(Paragraph("Membre 2 : ____________________________", normal_style))
 
     doc.build(elements)
+
     return file_path
 
-st.header("Informations PV")
+df_weights = df_scoring
 
-direction = st.text_input("Direction")
-departement = st.text_input("Département")
-service = st.text_input("Service")
-ref = st.text_input("Référence du dossier")
-ao = st.text_input("Numéro d'appel d'offres")
-objet = st.text_input("Objet du marché")
-date = st.date_input("Date")
-lieu = st.text_input("Lieu")
+df_scores = pd.DataFrame(
+    scores_data,
+    columns=criteria_names,
+    index=supplier_names
+).reset_index().rename(columns={"index": "Supplier"})
 
-data = {
-    "direction": direction,
-    "departement": departement,
-    "service": service,
-    "ref": ref,
-    "ao": ao,
-    "objet": objet,
-    "date": str(date),
-    "lieu": lieu
-}
+df_results = df_ahp
 
-# مثال جدول نتائج
-df_results = pd.DataFrame({
-    "Fournisseur": ["A", "B", "C"],
-    "Score Global": [85, 78, 90],
-    "Classement": [2, 3, 1]
+df_members = pd.DataFrame({
+    "Nom": ["Zennani Amran", "Zerguine Moussa", "Membre 3"],
+    "Fonction": ["Président", "Membre", "Membre"]
 })
+with open(pdf_path, "rb") as f:
+    st.download_button("📄 Télécharger le PV officiel", f, file_name="PV_SONATRACH.pdf")
 
-if st.button("Générer PV PDF"):
-    file = generate_pv(data, df_results)
-    with open(file, "rb") as f:
-        st.download_button("Télécharger le PV", f, file_name="PV_SONATRACH.pdf")
 
 
 
