@@ -258,8 +258,6 @@ st.caption("Developed for Strategic Sourcing and Procurement Analysis.")
 st.caption("Developed by Zennani Amran / Zerguine Moussa.")
 
 #.......PV.........
-logo_sonatrach.png
-
 def generate_sonatrach_pv(data, df_weights, df_scores, df_results, df_members):
     file_path = "PV_SONATRACH_OFFICIEL.pdf"
 
@@ -367,6 +365,7 @@ df_members = pd.DataFrame({
 })
 with open(pdf_path, "rb") as f:
     st.download_button("📄 Télécharger le PV officiel", f, file_name="PV_SONATRACH.pdf")
+
 
 
 
