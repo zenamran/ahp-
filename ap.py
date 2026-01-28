@@ -258,17 +258,12 @@ st.caption("Developed for Strategic Sourcing and Procurement Analysis.")
 st.caption("Developed by Zennani Amran / Zerguine Moussa.")
 
 #.......PV.........
-def generate_sonatrach_pv(data, df_weights, df_scores, df_results, df_members):
-    file_path = "PV_SONATRACH_OFFICIEL.pdf"
+def generate_pv(...):
+    pdf_path = "PV_Sonatrach.pdf"
+    # هنا كود reportlab لإنشاء الملف
+    doc.build(elements)
+    return pdf_path
 
-    doc = SimpleDocTemplate(
-        file_path,
-        pagesize=A4,
-        rightMargin=2*cm,
-        leftMargin=2*cm,
-        topMargin=2*cm,
-        bottomMargin=2*cm
-    )
 
     elements = []
 
@@ -363,15 +358,18 @@ df_members = pd.DataFrame({
     "Nom": ["Zennani Amran", "Zerguine Moussa", "Membre 3"],
     "Fonction": ["Président", "Membre", "Membre"]
 })
-pdf_path = "pv_sonatrach.pdf"
+if st.button("📄 Generate PV"):
+    pdf_path = generate_pv()
 
-with open(pdf_path, "rb") as f:
-    st.download_button(
-        label="📄 Download PV (PDF)",
-        data=f,
-        file_name="PV_Sonatrach.pdf",
-        mime="application/pdf"
-    )
+    with open(pdf_path, "rb") as f:
+        st.download_button(
+            "⬇️ Download Official PV",
+            data=f,
+            file_name="PV_Sonatrach.pdf",
+            mime="application/pdf"
+        )
+
+
 
 
 
