@@ -12,10 +12,11 @@ from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import Image
+from reportlab.platypus import Image
+from reportlab.lib.units import cm
 
 logo = Image("logo_sonatrach.png", width=4*cm, height=2*cm)
 elements.append(logo)
-
 pdfmetrics.registerFont(TTFont("DejaVu", "DejaVuSans.ttf"))
 pdfmetrics.registerFont(TTFont("DejaVu-Bold", "DejaVuSans-Bold.ttf"))
 
@@ -365,6 +366,7 @@ df_members = pd.DataFrame({
 })
 with open(pdf_path, "rb") as f:
     st.download_button("📄 Télécharger le PV officiel", f, file_name="PV_SONATRACH.pdf")
+
 
 
 
