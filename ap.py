@@ -361,13 +361,14 @@ df_members = pd.DataFrame({
 if st.button("📄 Generate PV"):
     pdf_path = generate_pv()
 
-    with open(pdf_path, "rb") as f:
+    with open(pdf_path = "PV_Sonatrach.pdf") as f:
         st.download_button(
             "⬇️ Download Official PV",
             data=f,
             file_name="PV_Sonatrach.pdf",
             mime="application/pdf"
         )
+
 
 
 
