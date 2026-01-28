@@ -252,41 +252,6 @@ st.caption("Developed for Strategic Sourcing and Procurement Analysis.")
 st.caption("Developed by Zennani Amran / Zerguine Moussa.")
 
 #.......PV.........
-st.header("Informations PV")
-
-direction = st.text_input("Direction")
-departement = st.text_input("Département")
-service = st.text_input("Service")
-ref = st.text_input("Référence du dossier")
-ao = st.text_input("Numéro d'appel d'offres")
-objet = st.text_input("Objet du marché")
-date = st.date_input("Date")
-lieu = st.text_input("Lieu")
-
-data = {
-    "direction": direction,
-    "departement": departement,
-    "service": service,
-    "ref": ref,
-    "ao": ao,
-    "objet": objet,
-    "date": str(date),
-    "lieu": lieu
-}
-
-# مثال جدول نتائج
-df_results = pd.DataFrame({
-    "Fournisseur": ["A", "B", "C"],
-    "Score Global": [85, 78, 90],
-    "Classement": [2, 3, 1]
-})
-
-if st.button("Générer PV PDF"):
-    file = generate_pv(data, df_results)
-    with open(file, "rb") as f:
-        st.download_button("Télécharger le PV", f, file_name="PV_SONATRACH.pdf")
-
-
 def generate_pv(data, df_results):
     file_path = "PV_SONATRACH.pdf"
 
@@ -344,6 +309,43 @@ def generate_pv(data, df_results):
 
     doc.build(elements)
     return file_path
+
+st.header("Informations PV")
+
+direction = st.text_input("Direction")
+departement = st.text_input("Département")
+service = st.text_input("Service")
+ref = st.text_input("Référence du dossier")
+ao = st.text_input("Numéro d'appel d'offres")
+objet = st.text_input("Objet du marché")
+date = st.date_input("Date")
+lieu = st.text_input("Lieu")
+
+data = {
+    "direction": direction,
+    "departement": departement,
+    "service": service,
+    "ref": ref,
+    "ao": ao,
+    "objet": objet,
+    "date": str(date),
+    "lieu": lieu
+}
+
+# مثال جدول نتائج
+df_results = pd.DataFrame({
+    "Fournisseur": ["A", "B", "C"],
+    "Score Global": [85, 78, 90],
+    "Classement": [2, 3, 1]
+})
+
+if st.button("Générer PV PDF"):
+    file = generate_pv(data, df_results)
+    with open(file, "rb") as f:
+        st.download_button("Télécharger le PV", f, file_name="PV_SONATRACH.pdf")
+
+
+
 
 
 
