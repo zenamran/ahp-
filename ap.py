@@ -363,8 +363,8 @@ df_members = pd.DataFrame({
     "Nom": ["Zennani Amran", "Zerguine Moussa", "Membre 3"],
     "Fonction": ["Président", "Membre", "Membre"]
 })
-with open(pdf_path, "rb") as f:
     st.download_button("📄 Télécharger le PV officiel", f, file_name="PV_SONATRACH.pdf")
+
 
 
 
