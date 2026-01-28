@@ -258,7 +258,7 @@ st.caption("Developed for Strategic Sourcing and Procurement Analysis.")
 st.caption("Developed by Zennani Amran / Zerguine Moussa.")
 
 #.......PV.........
-def generate_pv(...):
+def generate_pv():
     pdf_path = "PV_Sonatrach.pdf"
     # هنا كود reportlab لإنشاء الملف
     doc.build(elements)
@@ -368,6 +368,7 @@ if st.button("📄 Generate PV"):
             file_name="PV_Sonatrach.pdf",
             mime="application/pdf"
         )
+
 
 
 
