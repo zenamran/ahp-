@@ -252,138 +252,100 @@ st.caption("Developed for Strategic Sourcing and Procurement Analysis.")
 st.caption("Developed by Zennani Amran / Zerguine Moussa.")
 
 #.......PV.........
-def generate_sonatrach_pv(df_results):
-    buffer = BytesIO()
+st.header("Informations PV")
 
-    def header_footer(canvas, doc):
-        canvas.setFont("Helvetica", 9)
-        canvas.drawString(2*cm, 28.5*cm, "SONATRACH")
-        canvas.drawString(2*cm, 28.0*cm, "Direction Approvisionnement")
-        canvas.drawString(2*cm, 27.5*cm, "Département Achats")
+direction = st.text_input("Direction")
+departement = st.text_input("Département")
+service = st.text_input("Service")
+ref = st.text_input("Référence du dossier")
+ao = st.text_input("Numéro d'appel d'offres")
+objet = st.text_input("Objet du marché")
+date = st.date_input("Date")
+lieu = st.text_input("Lieu")
 
-        canvas.drawRightString(19*cm, 28.5*cm, "Réf : PV/DSS/2026")
-        canvas.drawRightString(19*cm, 28.0*cm, "Date : ____ / ____ / 2026")
+data = {
+    "direction": direction,
+    "departement": departement,
+    "service": service,
+    "ref": ref,
+    "ao": ao,
+    "objet": objet,
+    "date": str(date),
+    "lieu": lieu
+}
 
-        canvas.line(2*cm, 27.2*cm, 19*cm, 27.2*cm)
+# مثال جدول نتائج
+df_results = pd.DataFrame({
+    "Fournisseur": ["A", "B", "C"],
+    "Score Global": [85, 78, 90],
+    "Classement": [2, 3, 1]
+})
 
-        canvas.drawRightString(19*cm, 1.2*cm, f"Page {doc.page}")
+if st.button("Générer PV PDF"):
+    file = generate_pv(data, df_results)
+    with open(file, "rb") as f:
+        st.download_button("Télécharger le PV", f, file_name="PV_SONATRACH.pdf")
 
-    doc = SimpleDocTemplate(
-        buffer,
-        pagesize=A4,
-        rightMargin=2*cm,
-        leftMargin=2*cm,
-        topMargin=3.5*cm,
-        bottomMargin=2*cm
-    )
 
+def generate_pv(data, df_results):
+    file_path = "PV_SONATRACH.pdf"
+
+    doc = SimpleDocTemplate(file_path, pagesize=A4)
     styles = getSampleStyleSheet()
 
-title = ParagraphStyle(
-    name="Title",
-    fontName="DejaVu-Bold",
-    fontSize=16,
-    spaceAfter=20
-)
+    title_style = ParagraphStyle(
+        name="Title",
+        fontSize=16,
+        spaceAfter=20
+    )
 
-
-normal = ParagraphStyle(
-    name="Normal",
-    fontName="DejaVu",
-    fontSize=11
-)
-
+    normal = styles["Normal"]
 
     elements = []
 
-    # عنوان رسمي
+    # العنوان
+    elements.append(Paragraph("<b>PROCÈS-VERBAL D'ÉVALUATION DES OFFRES</b>", title_style))
+
+    # معلومات عامة
+    elements.append(Paragraph(f"<b>Direction :</b> {data['direction']}", normal))
+    elements.append(Paragraph(f"<b>Département :</b> {data['departement']}", normal))
+    elements.append(Paragraph(f"<b>Service :</b> {data['service']}", normal))
+    elements.append(Paragraph(f"<b>Référence :</b> {data['ref']}", normal))
+    elements.append(Paragraph(f"<b>Appel d’offres :</b> {data['ao']}", normal))
+    elements.append(Paragraph(f"<b>Objet :</b> {data['objet']}", normal))
+    elements.append(Paragraph(f"<b>Date :</b> {data['date']}", normal))
+    elements.append(Paragraph(f"<b>Lieu :</b> {data['lieu']}", normal))
+
+    elements.append(Paragraph("<br/><b>Résultats de l'évaluation :</b>", normal))
+
+    # تحويل الجدول إلى Table
+    table_data = [df_results.columns.tolist()] + df_results.values.tolist()
+
+    table = Table(table_data)
+    table.setStyle(TableStyle([
+        ('GRID', (0,0), (-1,-1), 0.5, None),
+        ('BACKGROUND', (0,0), (-1,0), None),
+        ('ALIGN', (0,0), (-1,-1), 'CENTER'),
+    ]))
+
+    elements.append(table)
+
+    # الخلاصة
+    elements.append(Paragraph("<br/>Conclusion :", normal))
     elements.append(Paragraph(
-        "PROCÈS-VERBAL DE LA COMMISSION D’ÉVALUATION DES OFFRES",
-        title
+        "La commission recommande l’attribution provisoire du marché au soumissionnaire ayant obtenu la meilleure note globale.",
+        normal
     ))
 
-    elements.append(Spacer(1, 10))
+    # التوقيعات
+    elements.append(Paragraph("<br/><br/>Signatures :", normal))
+    elements.append(Paragraph("Président de la commission : ____________________", normal))
+    elements.append(Paragraph("Membres : ____________________", normal))
 
-    # نص إداري رسمي
-    text = """
-    L’an deux mille vingt-six et le ____ / ____ / 2026, la commission d’évaluation des offres,
-    dûment constituée conformément aux procédures internes de SONATRACH, s’est réunie au siège
-    de la Direction Approvisionnement afin de procéder à l’analyse et à l’évaluation des offres
-    reçues dans le cadre de la consultation relative à la sélection de fournisseurs.
+    doc.build(elements)
+    return file_path
 
-    L’évaluation a été réalisée selon une méthodologie multicritère reposant sur l’approche
-    Analytic Hierarchy Process (AHP) combinée à une méthode de Scoring pondéré, garantissant
-    l’objectivité, la transparence et la traçabilité du processus de décision.
-    """
 
-    for line in text.strip().split("\n"):
-        elements.append(Paragraph(line.strip(), body))
-
-    elements.append(Spacer(1, 15))
-
-    # جدول النتائج
-    elements.append(Paragraph("Résultats de l’évaluation :", styles["Heading2"]))
-
-    table_data = [list(df_results.columns)] + df_results.values.tolist()
-
-    table = Table(table_data, repeatRows=1, hAlign="LEFT")
-
-    table.setStyle(TableStyle([
-        ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
-        ('GRID', (0,0), (-1,-1), 0.5, colors.grey),
-        ('FONT', (0,0), (-1,-1), 'Helvetica'),
-        ('FONTSIZE', (0,0), (-1,-1), 9),
-        ('ALIGN', (1,1), (-1,-1), 'CENTER'),
-        ('BOTTOMPADDING', (0,0), (-1,0), 8),
-    ]))
-
-    elements.append(Spacer(1, 10))
-    elements.append(table)
-    elements.append(Spacer(1, 15))
-
-    # النتيجة النهائية
-    best = df_results.iloc[0]["Supplier"]
-
-    conclusion = f"""
-    Au vu des résultats obtenus, la commission d’évaluation propose de retenir l’offre du fournisseur
-    <b>{best}</b>, ayant obtenu la meilleure note globale conformément aux critères définis.
-    """
-
-    elements.append(Paragraph(conclusion, body))
-    elements.append(Spacer(1, 20))
-
-    # توقيعات رسمية
-    elements.append(Paragraph("Fait pour servir et valoir ce que de droit.", body))
-    elements.append(Spacer(1, 30))
-
-    signature_table = Table([
-        ["Président de la commission", "Membre", "Membre"],
-        ["Nom : ____________________", "Nom : ____________________", "Nom : ____________________"],
-        ["Signature : ______________", "Signature : _____________", "Signature : _____________"],
-    ], colWidths=[6*cm, 6*cm, 6*cm])
-
-    signature_table.setStyle(TableStyle([
-        ('GRID', (0,0), (-1,-1), 0.5, colors.grey),
-        ('ALIGN', (0,0), (-1,-1), 'CENTER'),
-        ('FONTSIZE', (0,0), (-1,-1), 9),
-    ]))
-
-    elements.append(signature_table)
-
-    doc.build(elements, onFirstPage=header_footer, onLaterPages=header_footer)
-
-    buffer.seek(0)
-    return buffer
-st.subheader("📄 Procès-Verbal Officiel")
-
-pdf = generate_sonatrach_pv(df_ahp)
-
-st.download_button(
-    "📥 Télécharger le PV",
-    data=pdf,
-    file_name="PV_Evaluation.pdf",
-    mime="application/pdf"
-)
 
 
 
