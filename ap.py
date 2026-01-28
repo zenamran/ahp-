@@ -261,7 +261,8 @@ st.caption("Developed by Zennani Amran / Zerguine Moussa.")
 def generate_pv():
     pdf_path = "PV_Sonatrach.pdf"
     # هنا كود reportlab لإنشاء الملف
-    pdf.build(elements)
+
+    elements.build(elements)
     return pdf_path
 
 
@@ -368,6 +369,7 @@ if st.button("📄 Generate PV"):
             file_name="PV_Sonatrach.pdf",
             mime="application/pdf"
         )
+
 
 
 
